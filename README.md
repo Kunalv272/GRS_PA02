@@ -89,7 +89,6 @@ Experiments run on localhost; real network behavior may differ. Cache
 counters depend on kernel perf permissions. Absolute values depend on
 hardware and OS scheduling.
 
-Submission Checklist
 
 Client/server implementations (A1/A2/A3) Automated Part C script CSV
 results Plotting script (Part D) Generated graphs README documentation
