@@ -1,4 +1,4 @@
-# 2-Copy, 1-Copy, and 0-Copy Socket Implementations
+# 2-Copy, 1-Copy, and 0-Copy Socket Implementation
 
 **Language:** C, Python  
 **Platform:** Linux (x86_64)
