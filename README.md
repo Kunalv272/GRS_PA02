@@ -1,58 +1,66 @@
-# 2 copy, 1 copy, 0 copy sockets implementation
+# 2-Copy, 1-Copy, and 0-Copy Socket Implementations
 
-Language: C / Python
+**Language:** C, Python  
+**Platform:** Linux (x86_64)
 
-Platform: Linux (x86_64)
-📖 Overview
+---
+
+## 📖 Overview
 
 This project experimentally evaluates the cost of data movement in network I/O by implementing and comparing three TCP-based client–server communication strategies:
-Implementation	Description	Strategy
-A1	Standard Baseline	Two-copy socket communication (send/recv)
-A2	One-Copy Optimized	Scatter-Gather I/O (sendmsg with iovec)
-A3	Zero-Copy	Kernel-bypass optimization (MSG_ZEROCOPY)
 
-The goal is to measure and analyze micro-architectural and application-level performance metrics including throughput, latency, CPU cycles, and context switches.
-📂 Project Structure
-Plaintext
+| Implementation | Description         | Strategy |
+|---------------|---------------------|----------|
+| **A1** | Standard Baseline | Two-copy socket communication (`send` / `recv`) |
+| **A2** | One-Copy Optimized | Scatter–Gather I/O (`sendmsg` with `iovec`) |
+| **A3** | Zero-Copy | Kernel-assisted zero-copy (`MSG_ZEROCOPY`) |
 
+The goal is to measure and analyze both micro-architectural and application-level performance metrics, including throughput, latency, CPU cycles, and context switches.
+
+---
+
+## 📂 Project Structure
+
+.
 ├── Source Code
-│   ├── a1_client.c / a1_server.c   # Baseline Implementation
-│   ├── a2_client.c / a2_server.c   # One-Copy Implementation
-│   ├── a3_client.c / a3_server.c   # Zero-Copy Implementation
+│ ├── a1_client.c / a1_server.c # Baseline implementation
+│ ├── a2_client.c / a2_server.c # One-copy implementation
+│ ├── a3_client.c / a3_server.c # Zero-copy implementation
 │
 ├── Scripts
-│   ├── Makefile                    # Build system
-│   ├── MT25029_Part_C_RunExperiments.sh  # Automation script
-│   ├── MT25029_Part_D.py           # Plotting script (Python)
+│ ├── Makefile # Build system
+│ ├── MT25029_Part_C_RunExperiments.sh # Experiment automation
+│ ├── MT25029_Part_D.py # Plotting script (Python)
 │
 └── Output (Generated)
-    ├── MT25029_Raw.csv             # Raw experimental data
-    └── *.png                       # Performance graphs
+├── MT25029_Raw.csv # Raw experimental data
+└── *.png # Performance graphs
 
-⚙️ System Configuration
 
-    CPU: Intel Core i7
+---
 
-    RAM: 16 GB
+## ⚙️ System Configuration
 
-    OS: Linux (x86_64)
+- **CPU:** Intel Core i7  
+- **RAM:** 16 GB  
+- **OS:** Linux (x86_64)  
+- **Kernel:** Default Linux distribution kernel  
+- **Network:** TCP over localhost (loopback)
 
-    Kernel: Default Linux distribution kernel
+---
 
-    Network: Localhost TCP Loopback
+## 🚀 Quick Start
 
-🚀 Quick Start
-1. Build the Project
+### 1. Build the Project
 
 Clean previous builds and compile all binaries:
-Bash
 
+```bash
 make clean && make
 
-2. Run Experiments (Part C + D)
+2. Run Experiments (Part C + Part D)
 
-Execute the automation script. This will run all benchmarks and automatically generate the plots.
-Bash
+Run the automation script to execute all benchmarks and generate plots:
 
 ./MT25029_Part_C_RunExperiments.sh
 
@@ -61,15 +69,15 @@ Bash
 📊 Methodology & Metrics
 Metrics Collected
 
-    Throughput: Application-level (Mbps)
+    Throughput: Application-level throughput (Mbps)
 
-    Latency: Round-trip time (microseconds)
+    Latency: Round-trip time (µs)
 
-    CPU Cycles: Measured via perf stat
+    CPU Cycles: Measured using perf stat
 
-    Context Switches: Measured via perf stat
+    Context Switches: Measured using perf stat
 
-    Cache Behavior: Measured via perf stat
+    Cache Behavior: Measured using perf stat
 
 Experimental Parameters
 
@@ -80,32 +88,41 @@ Experimental Parameters
 📈 Output Format
 CSV Data (MT25029_Raw.csv)
 
-Results are appended automatically in the following format:
-Code snippet
+Results are automatically appended in the following format:
 
-impl, msg_size, threads, latency_us, throughput_mbps, cycles, context_switches
+impl,msg_size,threads,latency_us,throughput_mbps,cycles,context_switches
 
 Generated Plots
 
-After execution, the following images will be generated:
+After execution, the following plots are generated:
 
     throughput.png
 
-    latency.png (Logarithmic scaling)
+    latency.png (logarithmic scale)
 
     context_switches.png
 
     cycles_per_byte.png
 
-Each plot contains four subplots corresponding to the different message sizes (64, 512, 4096, 65536 bytes).
+Each plot contains four subplots, corresponding to message sizes:
+
+    64 B
+
+    512 B
+
+    4096 B
+
+    65536 B
+
 ⚠️ Notes and Limitations
 
-    Localhost Only: Experiments run on loopback; real network behavior (latency/jitter) may differ.
+    Localhost Only: Experiments run on loopback; real network latency and jitter are not represented.
 
-    Permissions: Cache counters and perf stats require appropriate kernel permissions (paranoid level).
+    Permissions: Access to cache counters and perf statistics may require lowering the kernel perf_event_paranoid level.
 
-    Variability: Absolute values depend heavily on hardware and OS scheduling states at the time of execution.
+    Variability: Absolute performance values depend on hardware characteristics and OS scheduling state at runtime.
 
 📝 Conclusion
 
-This project demonstrates the performance impact of different socket communication strategies. By automating the comparison of A1, A2, and A3, we can distinctly observe how threading and message size affect latency, throughput, and scheduling overhead in the Linux kernel.
+This project demonstrates the performance impact of different socket communication strategies in Linux. By automating the comparison of A1 (two-copy), A2 (one-copy), and A3 (zero-copy) approaches, the experiments highlight how message size and thread count influence latency, throughput, and kernel scheduling overhead.
+
