@@ -1,101 +1,111 @@
-Programming Assignment – Network I/O Performance Evaluation
+# 2 copy, 1 copy, 0 copy sockets implementation
 
-Roll Number: MT25029
+Language: C / Python
 
-Overview
+Platform: Linux (x86_64)
+📖 Overview
 
-This project experimentally evaluates the cost of data movement in
-network I/O by implementing and comparing three TCP-based client–server
-communication strategies:
+This project experimentally evaluates the cost of data movement in network I/O by implementing and comparing three TCP-based client–server communication strategies:
+Implementation	Description	Strategy
+A1	Standard Baseline	Two-copy socket communication (send/recv)
+A2	One-Copy Optimized	Scatter-Gather I/O (sendmsg with iovec)
+A3	Zero-Copy	Kernel-bypass optimization (MSG_ZEROCOPY)
 
-A1: Standard two-copy socket communication A2: One-copy optimized socket
-communication A3: Zero-copy socket communication
+The goal is to measure and analyze micro-architectural and application-level performance metrics including throughput, latency, CPU cycles, and context switches.
+📂 Project Structure
+Plaintext
 
-The goal is to measure and analyze micro-architectural and
-application-level performance metrics such as throughput, latency, CPU
-cycles, cache behavior, and context switches.
+├── Source Code
+│   ├── a1_client.c / a1_server.c   # Baseline Implementation
+│   ├── a2_client.c / a2_server.c   # One-Copy Implementation
+│   ├── a3_client.c / a3_server.c   # Zero-Copy Implementation
+│
+├── Scripts
+│   ├── Makefile                    # Build system
+│   ├── MT25029_Part_C_RunExperiments.sh  # Automation script
+│   ├── MT25029_Part_D.py           # Plotting script (Python)
+│
+└── Output (Generated)
+    ├── MT25029_Raw.csv             # Raw experimental data
+    └── *.png                       # Performance graphs
 
+⚙️ System Configuration
+
+    CPU: Intel Core i7
+
+    RAM: 16 GB
+
+    OS: Linux (x86_64)
+
+    Kernel: Default Linux distribution kernel
+
+    Network: Localhost TCP Loopback
+
+🚀 Quick Start
+1. Build the Project
+
+Clean previous builds and compile all binaries:
+Bash
+
+make clean && make
+
+2. Run Experiments (Part C + D)
+
+Execute the automation script. This will run all benchmarks and automatically generate the plots.
+Bash
+
+./MT25029_Part_C_RunExperiments.sh
+
+    Note: No manual intervention is required. The script handles compilation, execution, data collection, and plotting.
+
+📊 Methodology & Metrics
 Metrics Collected
 
-Throughput (Mbps) – Application-level Latency (microseconds) –
-Application-level CPU cycles – perf stat Context switches – perf stat
-Cache behavior – perf stat
+    Throughput: Application-level (Mbps)
 
-System Configuration
+    Latency: Round-trip time (microseconds)
 
-CPU: Intel Core i7 RAM: 16 GB Operating System: Linux (x86_64) Kernel:
-Default Linux distribution kernel Network: localhost TCP
+    CPU Cycles: Measured via perf stat
 
-Project Structure
+    Context Switches: Measured via perf stat
 
-a1_client.c a1_server.c a2_client.c a2_server.c a3_client.c a3_server.c
-Makefile MT25029_Part_C_RunExperiments.sh MT25029_Part_D.py
-MT25029_Raw.csv README.txt
+    Cache Behavior: Measured via perf stat
 
-Generated after execution: throughput.png latency.png
-context_switches.png cycles_per_byte.png
+Experimental Parameters
 
-Build Instructions
+    Message Sizes: 64 B, 512 B, 4096 B, 65536 B
 
-Run: make clean && make
+    Thread Counts: 1, 2, 4, 8
 
-The clean target removes binaries, CSV files, and generated plots to
-ensure fresh experiments.
+📈 Output Format
+CSV Data (MT25029_Raw.csv)
 
-Running Experiments (Part C + D)
+Results are appended automatically in the following format:
+Code snippet
 
-Execute: ./MT25029_Part_C_RunExperiments.sh
+impl, msg_size, threads, latency_us, throughput_mbps, cycles, context_switches
 
-This single script: - Compiles all implementations - Runs experiments
-across message sizes and thread counts - Collects perf profiling data -
-Generates MT25029_Raw.csv - Automatically invokes the Python plotting
-script
+Generated Plots
 
-No manual intervention is required.
+After execution, the following images will be generated:
 
-CSV Output
+    throughput.png
 
-Results are stored in MT25029_Raw.csv with format:
+    latency.png (Logarithmic scaling)
 
-impl,msg_size,threads,latency_us,throughput_mbps,cycles,context_switches
+    context_switches.png
 
-Plot Generation (Part D)
+    cycles_per_byte.png
 
-After Part C completes, MT25029_Part_D.py is executed automatically to
-generate:
+Each plot contains four subplots corresponding to the different message sizes (64, 512, 4096, 65536 bytes).
+⚠️ Notes and Limitations
 
-throughput.png latency.png context_switches.png cycles_per_byte.png
+    Localhost Only: Experiments run on loopback; real network behavior (latency/jitter) may differ.
 
-Each plot contains four subplots (64, 512, 4096, 65536 bytes) comparing
-A1, A2, and A3. Latency plots use logarithmic scaling.
+    Permissions: Cache counters and perf stats require appropriate kernel permissions (paranoid level).
 
-Experimental Methodology
+    Variability: Absolute values depend heavily on hardware and OS scheduling states at the time of execution.
 
-Message sizes: 64, 512, 4096, 65536 bytes Thread counts: 1, 2, 4, 8
+📝 Conclusion
 
-Servers are restarted per implementation. Measurements are collected via
-perf stat. Results are appended automatically to CSV. Plots are
-generated directly from collected data.
-
-Reproducibility
-
-Run: make clean && make ./MT25029_Part_C_RunExperiments.sh
-
-This regenerates all results and plots from scratch.
-
-Notes and Limitations
-
-Experiments run on localhost; real network behavior may differ. Cache
-counters depend on kernel perf permissions. Absolute values depend on
-hardware and OS scheduling.
-
-
-Client/server implementations (A1/A2/A3) Automated Part C script CSV
-results Plotting script (Part D) Generated graphs README documentation
-
-Conclusion
-
-This project demonstrates the performance impact of different socket
-communication strategies and shows how threading and message size affect
-latency, throughput, and scheduling overhead. Automated experimentation
-enables systematic comparison across implementations.
+This project demonstrates the performance impact of different socket communication strategies. By automating the comparison of A1, A2, and A3, we can distinctly observe how threading and message size affect latency, throughput, and scheduling overhead in the Linux kernel.
