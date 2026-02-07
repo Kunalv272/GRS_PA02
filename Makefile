@@ -13,4 +13,4 @@ all:
 
 clean:
 	rm -f a1_client a1_server a2_client a2_server a3_client a3_server *.o \
-	      MT25029_Raw.csv *.png
+	      MT25029_Raw.csv 

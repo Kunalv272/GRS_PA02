@@ -1,19 +1,19 @@
 #!/bin/bash
-# MT25029 Final Part C
+# MT25029
 
 SIZES="64 512 4096 65536"
 THREADS="1 2 4 8"
 
-MASTER="MT25029_Raw.csv"
+MASTER="MT25029_Part_C_Raw.csv"
 
 make clean && make
 rm -f $MASTER
 
-echo "impl,msg_size,threads,latency_us,throughput_mbps,cycles,context_switches" > $MASTER
+echo "impl,msg_size,threads,latency_us,throughput_mbps,cycles,cache_misses,l1_misses,context_switches" > $MASTER
 
 for impl in A1 A2 A3; do
 
-  ./a${impl#A}_server &
+  ./a${impl#A}_server 4096 &
   SERVER_PID=$!
   sleep 2
 
@@ -24,15 +24,19 @@ for impl in A1 A2 A3; do
 
       TMP=$(mktemp)
 
-      perf stat ./a${impl#A}_client 127.0.0.1 9090 $s $t 2>&1 | tee $TMP
+      perf stat -e cycles,cache-misses,L1-dcache-load-misses,context-switches \
+        ./a${impl#A}_client 127.0.0.1 9090 $s $t \
+        2>&1 | tee $TMP
 
-      latency=$(grep LATENCY_US $TMP | cut -d= -f2)
+      lat=$(grep LATENCY_US $TMP | cut -d= -f2)
       thr=$(grep THROUGHPUT_MBPS $TMP | cut -d= -f2)
 
-      cycles=$(grep -m1 " cycles" $TMP | awk '{print $1}' | tr -d ',')
-      ctx=$(grep -m1 "context-switches" $TMP | awk '{print $1}' | tr -d ',')
+      cycles=$(grep cycles $TMP | head -n1 | sed 's/,//g' | awk '{print $1}')
+      cache=$(grep cache-misses $TMP | head -n1 | sed 's/,//g' | awk '{print $1}')
+      l1=$(grep L1-dcache-load-misses $TMP | head -n1 | sed 's/,//g' | awk '{print $1}')
+      ctx=$(grep context-switches $TMP | head -n1 | sed 's/,//g' | awk '{print $1}')
 
-      echo "$impl,$s,$t,$latency,$thr,$cycles,$ctx" >> $MASTER
+      echo "$impl,$s,$t,$lat,$thr,$cycles,$cache,$l1,$ctx" >> $MASTER
 
       rm $TMP
       sleep 1
@@ -40,9 +44,9 @@ for impl in A1 A2 A3; do
     done
   done
 
-  kill $SERVER_PID
+  kill -9 $SERVER_PID
   sleep 2
 
 done
 
-echo "Done. Results in $MASTER"
+echo "Done → $MASTER"
