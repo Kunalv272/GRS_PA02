@@ -23,18 +23,18 @@ The goal is to measure and analyze both micro-architectural and application-leve
 
 .
 ├── Source Code
-│ ├── a1_client.c / a1_server.c # Baseline implementation
-│ ├── a2_client.c / a2_server.c # One-copy implementation
-│ ├── a3_client.c / a3_server.c # Zero-copy implementation
-│
-├── Scripts
-│ ├── Makefile # Build system
-│ ├── MT25029_Part_C_RunExperiments.sh # Experiment automation
-│ ├── MT25029_Part_D.py # Plotting script (Python)
-│
-└── Output (Generated)
-├── MT25029_Raw.csv # Raw experimental data
-└── *.png # Performance graphs
+│ ├── a1_client.c / a1_server.c # Baseline implementation<br>
+│ ├── a2_client.c / a2_server.c # One-copy implementation<br>
+│ ├── a3_client.c / a3_server.c # Zero-copy implementation<br>
+│<br>
+├── Scripts<br>
+│ ├── Makefile # Build system<br>
+│ ├── MT25029_Part_C_RunExperiments.sh # Experiment automation<br>
+│ ├── MT25029_Part_D.py # Plotting script (Python)<br>
+│<br>
+└── Output (Generated)<br>
+├── MT25029_Raw.csv # Raw experimental data<br>
+└── *.png # Performance graphs<br>
 
 
 ---
